@@ -1,0 +1,17 @@
+FROM node:alpine AS builder
+
+RUN npm create vite@latest frontend -- --template vanilla
+
+WORKDIR /frontend
+
+RUN npm install
+
+RUN npm run build 
+
+FROM nginx:alpine
+
+COPY --from=builder /frontend/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
